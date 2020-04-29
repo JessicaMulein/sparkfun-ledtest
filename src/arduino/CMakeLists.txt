@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(sparkx_arduino C CXX)
+project(sparkx_arduino CXX)
 set(CMAKE_VERBOSE_MAKEFILE True)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -14,4 +14,4 @@ set(SOURCE_FILES
 )
 #list(TRANSFORM SOURCE_FILES PREPEND "src/")
 
-add_library(sparkx_arduino STATIC ${SOURCE_FILES})
+add_library(sparkx_arduino STATIC stdlib_noniso.c)

@@ -1,0 +1,3 @@
+[submodule "src/i2cdriver"]
+	path = src/i2cdriver
+	url = ssh://git@bitbucket.apertureimaging.com/aperture/i2cdriver.git

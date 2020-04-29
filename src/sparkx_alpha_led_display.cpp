@@ -32,9 +32,15 @@ Distributed as-is; no warranty is given.
 
 /*--------------------------- Device Status----------------------------------*/
 
+bool HT16K33::begin(uint8_t addressLeft, uint8_t addressLeftCenter, uint8_t addressRightCenter, uint8_t addressRight)
+{
+    _i2cPort = I2CDriver();
+    return this->begin(addressLeft, addressLeftCenter, addressRightCenter, addressRight);
+}
+
 bool HT16K33::begin(Aperture::USB::I2CDriverHelper &i2cPort, uint8_t addressLeft, uint8_t addressLeftCenter, uint8_t addressRightCenter, uint8_t addressRight)
 {
-
+    _i2cPort = i2cPort;
     _deviceAddressLeft = addressLeft;				//grab the address of the alphanumeric
     _deviceAddressLeftCenter = addressLeftCenter;   //grab the address of the alphanumeric
     _deviceAddressRightCenter = addressRightCenter; //grab the address of the alphanumeric
@@ -70,13 +76,13 @@ bool HT16K33::begin(Aperture::USB::I2CDriverHelper &i2cPort, uint8_t addressLeft
 
     if (initialize() == false)
     {
-        //Serial.println("Failed initialize()");
+        cerr << "Failed initialize()" << endl;
         return false;
     }
 
     if (clear() == false) //Clear all displays
     {
-        //Serial.println("Failed clear()");
+        cerr << "Failed clear()" << endl;
         return false;
     }
 

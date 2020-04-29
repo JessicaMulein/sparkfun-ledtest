@@ -21,10 +21,10 @@
  Modified May 2015 by Michael C. Miller - esp8266 progmem support
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
+#include <cstdlib>
+#include <cstdio>
+#include <string>
+#include <math>
 #include <algorithm>
 
 #include "Print.h"

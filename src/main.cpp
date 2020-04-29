@@ -10,13 +10,14 @@ HT16K33 display;
 
 int main()
 {
-    if (display.begin() == false)
+    I2CDriver i2CDriver;
+    if (display.begin(i2CDriver) == false)
     {
-        std::cout << "Device did not acknowledge! Freezing." << std::endl;
+        std::cerr << "Device did not acknowledge! Freezing." << std::endl;
         while (1);
     }
-    std::cout << "Display acknowledged." << std::endl;
+    std::cerr << "Display acknowledged." << std::endl;
 
-    std::string disp = "Milk";
-    display.print(disp.c_str());
+    const String disp = "Milk";
+    display.print(disp);
 }

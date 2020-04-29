@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(sparkx_arduino CXX)
+project(sparkx_arduino CXX C)
 set(CMAKE_VERBOSE_MAKEFILE True)
 
 set(CMAKE_CXX_STANDARD 17)

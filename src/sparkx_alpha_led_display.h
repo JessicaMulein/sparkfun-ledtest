@@ -87,7 +87,14 @@ public:
     HT16K33(const Aperture::USB::I2CDriverHelper &i2CPort);
 
     //Device status
-    bool begin(uint8_t addressLeft = DEFAULT_ADDRESS,
+    bool begin(
+            uint8_t addressLeft = DEFAULT_ADDRESS,
+            uint8_t addressLeftCenter = DEFAULT_NOTHING_ATTACHED,
+            uint8_t addressRightCenter = DEFAULT_NOTHING_ATTACHED,
+            uint8_t addressRight = DEFAULT_NOTHING_ATTACHED); // Sets the address of the device and opens the Wire port for communication
+    bool begin(
+               I2CDriver &i2CDriver,
+               uint8_t addressLeft = DEFAULT_ADDRESS,
                uint8_t addressLeftCenter = DEFAULT_NOTHING_ATTACHED,
                uint8_t addressRightCenter = DEFAULT_NOTHING_ATTACHED,
                uint8_t addressRight = DEFAULT_NOTHING_ATTACHED); // Sets the address of the device and opens the Wire port for communication

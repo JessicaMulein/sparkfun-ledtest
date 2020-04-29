@@ -30,7 +30,7 @@ if(NOT USE_LINUX_I2C)
     target_link_directories(ledtest PUBLIC src/i2cdriver/c/common)
     target_include_directories(ledtest SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/src/i2cdriver/c/common)
     target_link_libraries(ledtest PUBLIC i2cdriver sparkx_arduino)
-
+    add_dependencies(ledtest sparkx_arduino)
 
     add_executable(i2ccl src/i2cdriver/c/linux/i2c.c)
     target_link_directories(i2ccl PUBLIC src/i2cdriver/c/common)

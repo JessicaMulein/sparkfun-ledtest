@@ -63,9 +63,6 @@ size_t Print::printf(const char *format, ...) {
     va_end(arg);
     if (len > sizeof(temp) - 1) {
         buffer = new char[len + 1];
-        if (!buffer) {
-            return 0;
-        }
         va_start(arg, format);
         vsnprintf(buffer, len + 1, format, arg);
         va_end(arg);
@@ -293,7 +290,7 @@ char * Print::dtostrf(double number, signed char width, unsigned char prec, char
 
     // Print the digits, and if necessary, the decimal point
     digitcount += prec;
-    int8_t digit = 0;
+    int8_t digit;
     while (digitcount-- > 0) {
         digit = (int8_t)number;
         if (digit > 9) digit = 9; // insurance

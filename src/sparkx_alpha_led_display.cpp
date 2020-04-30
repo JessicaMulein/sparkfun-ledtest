@@ -28,6 +28,8 @@ Distributed as-is; no warranty is given.
 ******************************************************************************/
 
 #include "i2cDriverHelper.h"
+#include "sparkx_alpha_led_display.h"
+
 #include <sparkx_alpha_led_display.h>
 
 /*--------------------------- Device Status----------------------------------*/
@@ -38,8 +40,7 @@ bool HT16K33::begin(uint8_t addressLeft, uint8_t addressLeftCenter, uint8_t addr
     return this->begin(addressLeft, addressLeftCenter, addressRightCenter, addressRight);
 }
 
-bool HT16K33::begin(Aperture::USB::I2CDriverHelper &i2cPort, uint8_t addressLeft, uint8_t addressLeftCenter, uint8_t addressRightCenter, uint8_t addressRight)
-{
+bool HT16K33::begin(Aperture::USB::I2CDriverHelper &i2CPort, uint8_t addressLeft, uint8_t addressLeftCenter, uint8_t addressRightCenter, uint8_t addressRight) {
     _i2cPort = i2cPort;
     _deviceAddressLeft = addressLeft;				//grab the address of the alphanumeric
     _deviceAddressLeftCenter = addressLeftCenter;   //grab the address of the alphanumeric
@@ -61,7 +62,7 @@ bool HT16K33::begin(Aperture::USB::I2CDriverHelper &i2cPort, uint8_t addressLeft
 
     for (uint8_t i = 0; i < numberOfDisplays; i++)
     {
-        if (isConnected(i) == false)
+        if (!isConnected(i))
         {
             //Serial.println("Failed isConnected()");
             return false;
@@ -74,13 +75,13 @@ bool HT16K33::begin(Aperture::USB::I2CDriverHelper &i2cPort, uint8_t addressLeft
         // }
     }
 
-    if (initialize() == false)
+    if (!initialize())
     {
         cerr << "Failed initialize()" << endl;
         return false;
     }
 
-    if (clear() == false) //Clear all displays
+    if (!clear()) //Clear all displays
     {
         cerr << "Failed clear()" << endl;
         return false;
@@ -90,6 +91,7 @@ bool HT16K33::begin(Aperture::USB::I2CDriverHelper &i2cPort, uint8_t addressLeft
 
     return true;
 }
+
 
 //Check that all displays are responding
 //The Holtek IC sometimes fails to respond. This attempts multiple times before giving up.
@@ -121,28 +123,28 @@ bool HT16K33::isConnected(uint8_t displayNumber)
 bool HT16K33::initialize()
 {
     //Turn on system clock of all displays
-    if (enableSystemClock() == false)
+    if (!enableSystemClock())
     {
         //Serial.println("Init: Failed enableSystemClock()");
         return false;
     }
 
     //Set brightness of all displays to full brightness
-    if (setBrightness(16) == false)
+    if (!setBrightness(16))
     {
         //Serial.println("Init: Failed setBrightness()");
         return false;
     }
 
     //Blinking set - blinking off
-    if (setBlinkRate(ALPHA_BLINK_RATE_NOBLINK) == false)
+    if (!setBlinkRate(ALPHA_BLINK_RATE_NOBLINK))
     {
         //Serial.println("Init: Failed setBlinkRate()");
         return false;
     }
 
     //Turn on all displays
-    if (displayOn() == false)
+    if (!displayOn())
     {
         //Serial.println("Init: Failed display on");
         return false;
@@ -178,7 +180,7 @@ bool HT16K33::enableSystemClock()
     bool status = true;
     for (uint8_t i = 0; i < numberOfDisplays; i++)
     {
-        if (enableSystemClockSingle(i) == false)
+        if (!enableSystemClockSingle(i))
             status = false;
     }
     return status;
@@ -189,7 +191,7 @@ bool HT16K33::disableSystemClock()
     bool status = true;
     for (uint8_t i = 0; i < numberOfDisplays; i++)
     {
-        if (enableSystemClockSingle(i) == false)
+        if (!enableSystemClockSingle(i))
             status = false;
     }
     return status;
@@ -251,7 +253,7 @@ bool HT16K33::setBrightness(uint8_t duty)
     bool status = true;
     for (uint8_t i = 0; i < numberOfDisplays; i++)
     {
-        if (setBrightnessSingle(i, duty) == false)
+        if (!setBrightnessSingle(i, duty))
             status = false;
     }
     return status;
@@ -274,7 +276,7 @@ bool HT16K33::setBlinkRate(float rate)
     bool status = true;
     for (uint8_t i = 0; i < numberOfDisplays; i++)
     {
-        if (setBlinkRateSingle(i, rate) == false)
+        if (!setBlinkRateSingle(i, rate))
             status = false;
     }
     return status;
@@ -316,7 +318,7 @@ bool HT16K33::displayOffSingle(uint8_t displayNumber)
 //Set or clear the display on/off bit of a given display number
 bool HT16K33::setDisplayOnOff(uint8_t displayNumber, bool turnOnDisplay)
 {
-    if (turnOnDisplay == true)
+    if (turnOnDisplay)
         displayOnOff = ALPHA_DISPLAY_ON;
     else
         displayOnOff = ALPHA_DISPLAY_OFF;
@@ -334,7 +336,7 @@ bool HT16K33::displayOn()
 
     for (uint8_t i = 0; i < numberOfDisplays; i++)
     {
-        if (displayOnSingle(i) == false)
+        if (!displayOnSingle(i))
             status = false;
     }
 
@@ -349,7 +351,7 @@ bool HT16K33::displayOff()
 
     for (uint8_t i = 0; i < numberOfDisplays; i++)
     {
-        if (displayOffSingle(i) == false)
+        if (!displayOffSingle(i))
             status = false;
     }
 
@@ -371,7 +373,7 @@ bool HT16K33::setDecimalOnOff(uint8_t displayNumber, bool turnOnDecimal)
     uint8_t adr = 0x03;
     uint8_t dat;
 
-    if (turnOnDecimal == true)
+    if (turnOnDecimal)
     {
         decimalOnOff = ALPHA_DECIMAL_ON;
         dat = 0x01;
@@ -395,7 +397,7 @@ bool HT16K33::decimalOn()
 
     for (uint8_t i = 0; i < numberOfDisplays; i++)
     {
-        if (decimalOnSingle(i) == false)
+        if (!decimalOnSingle(i))
             status = false;
     }
 
@@ -411,7 +413,7 @@ bool HT16K33::decimalOff()
 
     for (uint8_t i = 0; i < numberOfDisplays; i++)
     {
-        if (decimalOffSingle(i) == false)
+        if (!decimalOffSingle(i))
             status = false;
     }
     return status;
@@ -432,7 +434,7 @@ bool HT16K33::setColonOnOff(uint8_t displayNumber, bool turnOnColon)
     uint8_t adr = 0x01;
     uint8_t dat;
 
-    if (turnOnColon == true)
+    if (turnOnColon)
     {
         colonOnOff = ALPHA_COLON_ON;
         dat = 0x01;
@@ -455,7 +457,7 @@ bool HT16K33::colonOn()
 
     for (uint8_t i = 0; i < numberOfDisplays; i++)
     {
-        if (colonOnSingle(i) == false)
+        if (!colonOnSingle(i))
             status = false;
     }
     return status;
@@ -469,7 +471,7 @@ bool HT16K33::colonOff()
 
     for (uint8_t i = 0; i < numberOfDisplays; i++)
     {
-        if (colonOffSingle(i) == false)
+        if (!colonOffSingle(i))
             status = false;
     }
     return status;
@@ -747,7 +749,7 @@ bool HT16K33::updateDisplay()
 
     for (uint8_t i = 0; i < numberOfDisplays; i++)
     {
-        if (writeRAM(lookUpDisplayAddress(i), 0, (uint8_t *)(displayRAM + (i * 16)), 16) == false)
+        if (!writeRAM(lookUpDisplayAddress(i), 0, (uint8_t * )(displayRAM + (i * 16)), 16))
         {
             //Serial.print("updateDisplay fail at display 0x");
             //Serial.println(lookUpDisplayAddress(i), HEX);

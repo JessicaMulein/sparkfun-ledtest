@@ -93,7 +93,7 @@ public:
             uint8_t addressRightCenter = DEFAULT_NOTHING_ATTACHED,
             uint8_t addressRight = DEFAULT_NOTHING_ATTACHED); // Sets the address of the device and opens the Wire port for communication
     bool begin(
-               I2CDriver &i2CDriver,
+               Aperture::USB::I2CDriverHelper &i2CPort,
                uint8_t addressLeft = DEFAULT_ADDRESS,
                uint8_t addressLeftCenter = DEFAULT_NOTHING_ATTACHED,
                uint8_t addressRightCenter = DEFAULT_NOTHING_ATTACHED,

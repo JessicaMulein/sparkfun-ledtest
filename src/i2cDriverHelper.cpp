@@ -10,8 +10,7 @@ Aperture::USB::I2CDriverHelper::I2CDriverHelper(std::string port) {
 }
 
 Aperture::USB::I2CDriverHelper::I2CDriverHelper() {
-    // TODO Autodetect
-    i2c_connect(&_i2cDriver, "DO029IJ8"); // HARDCODED
+    Aperture::USB::I2CDriverHelper::I2CDriverHelper("DO029IJ8"); // HARDCODED
 }
 
 void Aperture::USB::I2CDriverHelper::sendCommand(std::vector<std::string> command_arguments) {
@@ -42,7 +41,9 @@ void Aperture::USB::I2CDriverHelper::write(uint8_t reg) {
 }
 
 void Aperture::USB::I2CDriverHelper::endTransmission(bool sendStop) {
-    if (sendStop) i2c_stop(_i2cDriver);
+    if (sendStop) {
+        i2c_stop(_i2cDriver);
+    }
 }
 
 void Aperture::USB::I2CDriverHelper::requestFrom(uint8_t address, size_t size, bool sendStop) {

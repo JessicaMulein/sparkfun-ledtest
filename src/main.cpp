@@ -10,8 +10,8 @@ HT16K33 display;
 
 int main()
 {
-    I2CDriver i2CDriver;
-    if (display.begin(i2CDriver) == false)
+    Aperture::USB::I2CDriverHelper i2CPort;
+    if (!display.begin(i2CPort))
     {
         std::cerr << "Device did not acknowledge! Freezing." << std::endl;
         while (1);

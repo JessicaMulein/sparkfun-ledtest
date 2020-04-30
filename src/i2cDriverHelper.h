@@ -23,7 +23,7 @@ namespace Aperture {
             I2CDriverHelper(std::string port);
             void sendCommand(std::vector<std::string> command_arguments);
             static void sendCommand(I2CDriver &i2cDriver, std::vector<std::string> command_arguments);
-            void beginTransmission(uint8_t address);
+            void beginTransmission(uint8_t address, uint8_t op = 0);
             void write(uint8_t reg);
             void endTransmission(bool sendStop);
             void requestFrom(uint8_t address, size_t size, bool sendStop);

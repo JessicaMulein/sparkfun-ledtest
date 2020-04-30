@@ -5,6 +5,8 @@ set(CMAKE_VERBOSE_MAKEFILE True)
 set(CMAKE_CXX_STANDARD 17)
 
 set(SOURCE_FILES
+    Stream.h
+    Stream.cpp
     Print.h
     Print.cpp
     Printable.h

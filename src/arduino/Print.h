@@ -99,7 +99,6 @@ public:
 
     virtual void flush() { /* Empty implementation for backward compatibility */ }
     static char * dtostrf(double number, signed char width, unsigned char prec, char *s);
-
 };
 
 #endif

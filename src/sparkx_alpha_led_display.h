@@ -95,13 +95,13 @@ public:
             uint8_t addressRight = DEFAULT_NOTHING_ATTACHED); // Sets the address of the device and opens the Wire port for communication
     bool isConnected(uint8_t displayNumber);
 
-    bool initialize();
+    bool initialize(void);
 
     // bool checkDeviceID(uint8_t displayNumber);
     uint8_t lookUpDisplayAddress(uint8_t displayNumber);
 
     //Display configuration functions
-    bool clear();
+    bool clear(void);
 
     bool setBrightness(uint8_t duty);
 
@@ -113,9 +113,9 @@ public:
     bool setBlinkRateSingle(uint8_t displayNumber, float rate);
 
     // uint8_t getBlinkRate();
-    bool displayOn();
+    bool displayOn(void);
 
-    bool displayOff();
+    bool displayOff(void);
 
     bool displayOnSingle(uint8_t displayNumber);
 
@@ -123,9 +123,9 @@ public:
 
     bool setDisplayOnOff(uint8_t displayNumber, bool turnOnDisplay);
 
-    bool enableSystemClock();
+    bool enableSystemClock(void);
 
-    bool disableSystemClock();
+    bool disableSystemClock(void);
 
     bool enableSystemClockSingle(uint8_t displayNumber);
 
@@ -138,12 +138,12 @@ public:
 
     void printChar(uint8_t displayChar, uint8_t digit);
 
-    bool updateDisplay();
+    bool updateDisplay(void);
 
     //Colon and decimal
-    bool decimalOn();
+    bool decimalOn(void);
 
-    bool decimalOff();
+    bool decimalOff(void);
 
     bool decimalOnSingle(uint8_t displayNumber);
 
@@ -151,9 +151,9 @@ public:
 
     bool setDecimalOnOff(uint8_t displayNumber, bool turnOnDecimal);
 
-    bool colonOn();
+    bool colonOn(void);
 
-    bool colonOff();
+    bool colonOff(void);
 
     bool colonOnSingle(uint8_t displayNumber);
 

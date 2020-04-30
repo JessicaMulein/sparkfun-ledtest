@@ -13,15 +13,15 @@ Aperture::USB::I2CDriverHelper::I2CDriverHelper() {
     Aperture::USB::I2CDriverHelper::I2CDriverHelper("DO029IJ8"); // HARDCODED
 }
 
-void Aperture::USB::I2CDriverHelper::sendCommand(std::vector<std::string> command_arguments) {
+void Aperture::USB::I2CDriverHelper::sendCommand(std::vector <std::string> command_arguments) {
     return Aperture::USB::i2cDriver::sendCommand(this->_i2cDriver, command_arguments);
 }
 
-void Aperture::USB::I2CDriverHelper::sendCommand(I2CDriver &i2cDriver, std::vector<std::string> command_arguments) {
-    std::vector<char*> commands_v;
-    for (int i=0; i < command_arguments.size(); i++) {
+void Aperture::USB::I2CDriverHelper::sendCommand(I2CDriver &i2cDriver, std::vector <std::string> command_arguments) {
+    std::vector<char *> commands_v;
+    for (int i = 0; i < command_arguments.size(); i++) {
         std::string item = command_arguments[i];
-        char* cstr = command_arguments[i].data();
+        char *cstr = command_arguments[i].data();
         commands_v.push_back(cstr);
     }
     commands_v.push_back(nullptr);
@@ -48,8 +48,7 @@ void Aperture::USB::I2CDriverHelper::endTransmission(bool sendStop) {
 
 void Aperture::USB::I2CDriverHelper::requestFrom(uint8_t address, size_t size, bool sendStop) {
     i2c_start(_i2cDriver, address, OP_READ);
-    if (size > BUFFER_LENGTH)
-    {
+    if (size > BUFFER_LENGTH) {
         size = BUFFER_LENGTH;
     }
     i2c_read(_i2cDriver, address, rxBuffer, size);

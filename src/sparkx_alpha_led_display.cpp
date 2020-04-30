@@ -34,18 +34,18 @@ Distributed as-is; no warranty is given.
 
 /*--------------------------- Device Status----------------------------------*/
 
-bool HT16K33::begin(uint8_t addressLeft, uint8_t addressLeftCenter, uint8_t addressRightCenter, uint8_t addressRight)
-{
+bool HT16K33::begin(uint8_t addressLeft, uint8_t addressLeftCenter, uint8_t addressRightCenter, uint8_t addressRight) {
     _i2cPort = I2CDriver();
     return this->begin(addressLeft, addressLeftCenter, addressRightCenter, addressRight);
 }
 
-bool HT16K33::begin(Aperture::USB::I2CDriverHelper &i2CPort, uint8_t addressLeft, uint8_t addressLeftCenter, uint8_t addressRightCenter, uint8_t addressRight) {
+bool HT16K33::begin(Aperture::USB::I2CDriverHelper &i2CPort, uint8_t addressLeft, uint8_t addressLeftCenter,
+                    uint8_t addressRightCenter, uint8_t addressRight) {
     _i2cPort = i2cPort;
-    _deviceAddressLeft = addressLeft;				//grab the address of the alphanumeric
+    _deviceAddressLeft = addressLeft;                //grab the address of the alphanumeric
     _deviceAddressLeftCenter = addressLeftCenter;   //grab the address of the alphanumeric
     _deviceAddressRightCenter = addressRightCenter; //grab the address of the alphanumeric
-    _deviceAddressRight = addressRight;				//grab the address of the alphanumeric
+    _deviceAddressRight = addressRight;                //grab the address of the alphanumeric
 
     if (_deviceAddressRight != DEFAULT_NOTHING_ATTACHED)
         numberOfDisplays = 4;
@@ -60,10 +60,8 @@ bool HT16K33::begin(Aperture::USB::I2CDriverHelper &i2CPort, uint8_t addressLeft
 
     _i2cPort = &i2cPort; //Remember the user's setting
 
-    for (uint8_t i = 0; i < numberOfDisplays; i++)
-    {
-        if (!isConnected(i))
-        {
+    for (uint8_t i = 0; i < numberOfDisplays; i++) {
+        if (!isConnected(i)) {
             //Serial.println("Failed isConnected()");
             return false;
         }
@@ -75,8 +73,7 @@ bool HT16K33::begin(Aperture::USB::I2CDriverHelper &i2CPort, uint8_t addressLeft
         // }
     }
 
-    if (!initialize())
-    {
+    if (!initialize()) {
         cerr << "Failed initialize()" << endl;
         return false;
     }
@@ -95,15 +92,12 @@ bool HT16K33::begin(Aperture::USB::I2CDriverHelper &i2CPort, uint8_t addressLeft
 
 //Check that all displays are responding
 //The Holtek IC sometimes fails to respond. This attempts multiple times before giving up.
-bool HT16K33::isConnected(uint8_t displayNumber)
-{
+bool HT16K33::isConnected(uint8_t displayNumber) {
     uint8_t triesBeforeGiveup = 20;
 
-    for (uint8_t x = 0; x < triesBeforeGiveup; x++)
-    {
+    for (uint8_t x = 0; x < triesBeforeGiveup; x++) {
         _i2cPort->beginTransmission(lookUpDisplayAddress(displayNumber));
-        if (_i2cPort->endTransmission() == 0)
-        {
+        if (_i2cPort->endTransmission() == 0) {
             // if (x > 0)
             // {
             // 	Serial.print("isConnect successful");
@@ -120,32 +114,27 @@ bool HT16K33::isConnected(uint8_t displayNumber)
     return false;
 }
 
-bool HT16K33::initialize()
-{
+bool HT16K33::initialize() {
     //Turn on system clock of all displays
-    if (!enableSystemClock())
-    {
+    if (!enableSystemClock()) {
         //Serial.println("Init: Failed enableSystemClock()");
         return false;
     }
 
     //Set brightness of all displays to full brightness
-    if (!setBrightness(16))
-    {
+    if (!setBrightness(16)) {
         //Serial.println("Init: Failed setBrightness()");
         return false;
     }
 
     //Blinking set - blinking off
-    if (!setBlinkRate(ALPHA_BLINK_RATE_NOBLINK))
-    {
+    if (!setBlinkRate(ALPHA_BLINK_RATE_NOBLINK)) {
         //Serial.println("Init: Failed setBlinkRate()");
         return false;
     }
 
     //Turn on all displays
-    if (!displayOn())
-    {
+    if (!displayOn()) {
         //Serial.println("Init: Failed display on");
         return false;
     }
@@ -175,30 +164,25 @@ bool HT16K33::initialize()
 // 	return true;
 // }
 
-bool HT16K33::enableSystemClock()
-{
+bool HT16K33::enableSystemClock() {
     bool status = true;
-    for (uint8_t i = 0; i < numberOfDisplays; i++)
-    {
+    for (uint8_t i = 0; i < numberOfDisplays; i++) {
         if (!enableSystemClockSingle(i))
             status = false;
     }
     return status;
 }
 
-bool HT16K33::disableSystemClock()
-{
+bool HT16K33::disableSystemClock() {
     bool status = true;
-    for (uint8_t i = 0; i < numberOfDisplays; i++)
-    {
+    for (uint8_t i = 0; i < numberOfDisplays; i++) {
         if (!enableSystemClockSingle(i))
             status = false;
     }
     return status;
 }
 
-bool HT16K33::enableSystemClockSingle(uint8_t displayNumber)
-{
+bool HT16K33::enableSystemClockSingle(uint8_t displayNumber) {
     uint8_t dataToWrite = ALPHA_CMD_SYSTEM_SETUP | 1; //Enable system clock
 
     bool status = writeRAM(lookUpDisplayAddress(displayNumber), dataToWrite);
@@ -206,17 +190,14 @@ bool HT16K33::enableSystemClockSingle(uint8_t displayNumber)
     return (status);
 }
 
-bool HT16K33::disableSystemClockSingle(uint8_t displayNumber)
-{
+bool HT16K33::disableSystemClockSingle(uint8_t displayNumber) {
     uint8_t dataToWrite = ALPHA_CMD_SYSTEM_SETUP | 0; //Standby mode
 
     return (writeRAM(lookUpDisplayAddress(displayNumber), dataToWrite));
 }
 
-uint8_t HT16K33::lookUpDisplayAddress(uint8_t displayNumber)
-{
-    switch (displayNumber)
-    {
+uint8_t HT16K33::lookUpDisplayAddress(uint8_t displayNumber) {
+    switch (displayNumber) {
         case 0:
             return _deviceAddressLeft;
             break;
@@ -236,8 +217,7 @@ uint8_t HT16K33::lookUpDisplayAddress(uint8_t displayNumber)
 
 /*-------------------------- Display configuration functions ---------------------------*/
 
-bool HT16K33::clear()
-{
+bool HT16K33::clear() {
     //Clear the displayRAM array
     for (uint8_t i = 0; i < 16 * numberOfDisplays; i++)
         displayRAM[i] = 0;
@@ -248,19 +228,16 @@ bool HT16K33::clear()
 }
 
 //Duty valid between 1 and 16
-bool HT16K33::setBrightness(uint8_t duty)
-{
+bool HT16K33::setBrightness(uint8_t duty) {
     bool status = true;
-    for (uint8_t i = 0; i < numberOfDisplays; i++)
-    {
+    for (uint8_t i = 0; i < numberOfDisplays; i++) {
         if (!setBrightnessSingle(i, duty))
             status = false;
     }
     return status;
 }
 
-bool HT16K33::setBrightnessSingle(uint8_t displayNumber, uint8_t duty)
-{
+bool HT16K33::setBrightnessSingle(uint8_t displayNumber, uint8_t duty) {
     if (duty > 15)
         duty = 15; //Error check
 
@@ -271,34 +248,25 @@ bool HT16K33::setBrightnessSingle(uint8_t displayNumber, uint8_t duty)
 //Parameter "rate" in Hz
 //Valid options for "rate" are defined by datasheet: 2, 1, or 0.5 Hz
 //Any other input to this function will result in steady alphanumeric display
-bool HT16K33::setBlinkRate(float rate)
-{
+bool HT16K33::setBlinkRate(float rate) {
     bool status = true;
-    for (uint8_t i = 0; i < numberOfDisplays; i++)
-    {
+    for (uint8_t i = 0; i < numberOfDisplays; i++) {
         if (!setBlinkRateSingle(i, rate))
             status = false;
     }
     return status;
 }
 
-bool HT16K33::setBlinkRateSingle(uint8_t displayNumber, float rate)
-{
-    if (rate == 2)
-    {
+bool HT16K33::setBlinkRateSingle(uint8_t displayNumber, float rate) {
+    if (rate == 2) {
         blinkRate = ALPHA_BLINK_RATE_2HZ;
-    }
-    else if (rate == 1)
-    {
+    } else if (rate == 1) {
         blinkRate = ALPHA_BLINK_RATE_1HZ;
-    }
-    else if (rate == 0.5)
-    {
+    } else if (rate == 0.5) {
         blinkRate = ALPHA_BLINK_RATE_0_5HZ;
     }
         //default to no blink
-    else
-    {
+    else {
         blinkRate = ALPHA_BLINK_RATE_NOBLINK;
     }
 
@@ -306,18 +274,16 @@ bool HT16K33::setBlinkRateSingle(uint8_t displayNumber, float rate)
     return (writeRAM(lookUpDisplayAddress(displayNumber), dataToWrite));
 }
 
-bool HT16K33::displayOnSingle(uint8_t displayNumber)
-{
+bool HT16K33::displayOnSingle(uint8_t displayNumber) {
     return setDisplayOnOff(displayNumber, true);
 }
-bool HT16K33::displayOffSingle(uint8_t displayNumber)
-{
+
+bool HT16K33::displayOffSingle(uint8_t displayNumber) {
     return setDisplayOnOff(displayNumber, false);
 }
 
 //Set or clear the display on/off bit of a given display number
-bool HT16K33::setDisplayOnOff(uint8_t displayNumber, bool turnOnDisplay)
-{
+bool HT16K33::setDisplayOnOff(uint8_t displayNumber, bool turnOnDisplay) {
     if (turnOnDisplay)
         displayOnOff = ALPHA_DISPLAY_ON;
     else
@@ -328,14 +294,12 @@ bool HT16K33::setDisplayOnOff(uint8_t displayNumber, bool turnOnDisplay)
 }
 
 //Turn on/off the entire display
-bool HT16K33::displayOn()
-{
+bool HT16K33::displayOn() {
     bool status = true;
 
     displayOnOff = ALPHA_DISPLAY_ON;
 
-    for (uint8_t i = 0; i < numberOfDisplays; i++)
-    {
+    for (uint8_t i = 0; i < numberOfDisplays; i++) {
         if (!displayOnSingle(i))
             status = false;
     }
@@ -343,14 +307,12 @@ bool HT16K33::displayOn()
     return status;
 }
 
-bool HT16K33::displayOff()
-{
+bool HT16K33::displayOff() {
     bool status = true;
 
     displayOnOff = ALPHA_DISPLAY_OFF;
 
-    for (uint8_t i = 0; i < numberOfDisplays; i++)
-    {
+    for (uint8_t i = 0; i < numberOfDisplays; i++) {
         if (!displayOffSingle(i))
             status = false;
     }
@@ -358,28 +320,22 @@ bool HT16K33::displayOff()
     return status;
 }
 
-bool HT16K33::decimalOnSingle(uint8_t displayNumber)
-{
+bool HT16K33::decimalOnSingle(uint8_t displayNumber) {
     return setDecimalOnOff(displayNumber, true);
 }
 
-bool HT16K33::decimalOffSingle(uint8_t displayNumber)
-{
+bool HT16K33::decimalOffSingle(uint8_t displayNumber) {
     return setDecimalOnOff(displayNumber, false);
 }
 
-bool HT16K33::setDecimalOnOff(uint8_t displayNumber, bool turnOnDecimal)
-{
+bool HT16K33::setDecimalOnOff(uint8_t displayNumber, bool turnOnDecimal) {
     uint8_t adr = 0x03;
     uint8_t dat;
 
-    if (turnOnDecimal)
-    {
+    if (turnOnDecimal) {
         decimalOnOff = ALPHA_DECIMAL_ON;
         dat = 0x01;
-    }
-    else
-    {
+    } else {
         decimalOnOff = ALPHA_DECIMAL_OFF;
         dat = 0x00;
     }
@@ -389,14 +345,12 @@ bool HT16K33::setDecimalOnOff(uint8_t displayNumber, bool turnOnDecimal)
 }
 
 //Turn on/off the entire display
-bool HT16K33::decimalOn()
-{
+bool HT16K33::decimalOn() {
     bool status = true;
 
     decimalOnOff = ALPHA_DECIMAL_ON;
 
-    for (uint8_t i = 0; i < numberOfDisplays; i++)
-    {
+    for (uint8_t i = 0; i < numberOfDisplays; i++) {
         if (!decimalOnSingle(i))
             status = false;
     }
@@ -405,42 +359,34 @@ bool HT16K33::decimalOn()
     return status;
 }
 
-bool HT16K33::decimalOff()
-{
+bool HT16K33::decimalOff() {
     bool status = true;
 
     decimalOnOff = ALPHA_DECIMAL_OFF;
 
-    for (uint8_t i = 0; i < numberOfDisplays; i++)
-    {
+    for (uint8_t i = 0; i < numberOfDisplays; i++) {
         if (!decimalOffSingle(i))
             status = false;
     }
     return status;
 }
 
-bool HT16K33::colonOnSingle(uint8_t displayNumber)
-{
+bool HT16K33::colonOnSingle(uint8_t displayNumber) {
     return setColonOnOff(displayNumber, true);
 }
 
-bool HT16K33::colonOffSingle(uint8_t displayNumber)
-{
+bool HT16K33::colonOffSingle(uint8_t displayNumber) {
     return setColonOnOff(displayNumber, false);
 }
 
-bool HT16K33::setColonOnOff(uint8_t displayNumber, bool turnOnColon)
-{
+bool HT16K33::setColonOnOff(uint8_t displayNumber, bool turnOnColon) {
     uint8_t adr = 0x01;
     uint8_t dat;
 
-    if (turnOnColon)
-    {
+    if (turnOnColon) {
         colonOnOff = ALPHA_COLON_ON;
         dat = 0x01;
-    }
-    else
-    {
+    } else {
         colonOnOff = ALPHA_COLON_OFF;
         dat = 0x00;
     }
@@ -449,28 +395,24 @@ bool HT16K33::setColonOnOff(uint8_t displayNumber, bool turnOnColon)
     updateDisplay();
 }
 
-bool HT16K33::colonOn()
-{
+bool HT16K33::colonOn() {
     bool status = true;
 
     colonOnOff = ALPHA_COLON_ON;
 
-    for (uint8_t i = 0; i < numberOfDisplays; i++)
-    {
+    for (uint8_t i = 0; i < numberOfDisplays; i++) {
         if (!colonOnSingle(i))
             status = false;
     }
     return status;
 }
 
-bool HT16K33::colonOff()
-{
+bool HT16K33::colonOff() {
     bool status = true;
 
     colonOnOff = ALPHA_COLON_OFF;
 
-    for (uint8_t i = 0; i < numberOfDisplays; i++)
-    {
+    for (uint8_t i = 0; i < numberOfDisplays; i++) {
         if (!colonOffSingle(i))
             status = false;
     }
@@ -480,8 +422,7 @@ bool HT16K33::colonOff()
 /*---------------------------- Light up functions ---------------------------------*/
 
 //Given a segment and a digit, set the matching bit within the RAM of the Holtek RAM set
-void HT16K33::illuminateSegment(uint8_t segment, uint8_t digit)
-{
+void HT16K33::illuminateSegment(uint8_t segment, uint8_t digit) {
     uint8_t com;
     uint8_t row;
 
@@ -527,8 +468,7 @@ void HT16K33::illuminateSegment(uint8_t segment, uint8_t digit)
 }
 
 //Given a binary set of segments and a digit, store this data into the RAM array
-void HT16K33::illuminateChar(uint16_t segmentsToTurnOn, uint8_t digit)
-{
+void HT16K33::illuminateChar(uint16_t segmentsToTurnOn, uint8_t digit) {
     for (uint8_t i = 0; i < 14; i++) //There are 14 segments on this display
     {
         if ((segmentsToTurnOn >> i) & 0b1)
@@ -539,8 +479,7 @@ void HT16K33::illuminateChar(uint16_t segmentsToTurnOn, uint8_t digit)
 #define SFE_ALPHANUM_UNKNOWN_CHAR 89
 
 //This is the lookup table of segments for various characters
-void HT16K33::printChar(uint8_t displayChar, uint8_t digit)
-{
+void HT16K33::printChar(uint8_t displayChar, uint8_t digit) {
 
     static uint16_t alphanumeric_segs[90]{
             0b00000000000000, //' ' (space)
@@ -549,88 +488,88 @@ void HT16K33::printChar(uint8_t displayChar, uint8_t digit)
             0b1001101101101,  //'$'
             0b10010000100100, //'%'
             0b110011011001,   //'&'
-            0b1000000000,	 //'''
-            0b111001,		  //'('
-            0b1111,			  //')'
+            0b1000000000,     //'''
+            0b111001,          //'('
+            0b1111,              //')'
             0b11111010000000, //'*'
             0b1001101000000,  //'+'
             0b10000000000000, //','
-            0b101000000,	  //'-'
-            0b10,			  //'.' - DEBUG: need to test
+            0b101000000,      //'-'
+            0b10,              //'.' - DEBUG: need to test
             0b10010000000000, //'/'
-            0b111111,		  //'0'
-            0b10000000110,	//'1'
-            0b101011011,	  //'2'
-            0b101001111,	  //'3'
-            0b101100110,	  //'4'
-            0b101101101,	  //'5'
-            0b101111101,	  //'6'
+            0b111111,          //'0'
+            0b10000000110,    //'1'
+            0b101011011,      //'2'
+            0b101001111,      //'3'
+            0b101100110,      //'4'
+            0b101101101,      //'5'
+            0b101111101,      //'6'
             0b1010000000001,  //'7'
-            0b101111111,	  //'8'
-            0b101100111,	  //'9'
-            0b1,			  //':' - DEBUG: need to test
+            0b101111111,      //'8'
+            0b101100111,      //'9'
+            0b1,              //':' - DEBUG: need to test
             0b10001000000000, //';'
             0b110000000000,   //'<'
-            0b101001000,	  //'='
+            0b101001000,      //'='
             0b10000010000000, //'>'
 
-            0b101110111,	  //'A'
+            0b101110111,      //'A'
             0b1001100001111,  //'B'
-            0b111001,		  //'C'
+            0b111001,          //'C'
             0b1001000001111,  //'D'
-            0b101111001,	  //'E'
-            0b101110001,	  //'F'
-            0b100111101,	  //'G'
-            0b101110110,	  //'H'
+            0b101111001,      //'E'
+            0b101110001,      //'F'
+            0b100111101,      //'G'
+            0b101110110,      //'H'
             0b1001000001001,  //'I'
-            0b11110,		  //'J'
+            0b11110,          //'J'
             0b110001110000,   //'K'
-            0b111000,		  //'L'
-            0b10010110110,	//'M'
+            0b111000,          //'L'
+            0b10010110110,    //'M'
             0b100010110110,   //'N'
-            0b111111,		  //'O'
-            0b101110011,	  //'P'
+            0b111111,          //'O'
+            0b101110011,      //'P'
             0b100000111111,   //'Q'
             0b100101110011,   //'R'
-            0b110001101,	  //'S'
+            0b110001101,      //'S'
             0b1001000000001,  //'T'
-            0b111110,		  //'U'
+            0b111110,          //'U'
             0b10010000110000, //'V'
             0b10100000110110, //'W'
             0b10110010000000, //'X'
             0b1010010000000,  //'Y'
             0b10010000001001, //'Z'
-            0b111001,		  //'['
+            0b111001,          //'['
             0b100010000000,   //'\'
-            0b1111,			  //']'
+            0b1111,              //']'
 
-            0b1000,			  //'_'
-            0b10000000,		  //'`'
-            0b101011111,	  //'a'
+            0b1000,              //'_'
+            0b10000000,          //'`'
+            0b101011111,      //'a'
             0b100001111000,   //'b'
-            0b101011000,	  //'c'
+            0b101011000,      //'c'
             0b10000100001110, //'d'
-            0b1111001,		  //'e'
-            0b1110001,		  //'f'
-            0b110001111,	  //'g'
-            0b101110100,	  //'h'
+            0b1111001,          //'e'
+            0b1110001,          //'f'
+            0b110001111,      //'g'
+            0b101110100,      //'h'
             0b1000000000000,  //'i'
-            0b1110,			  //'j'
+            0b1110,              //'j'
             0b1111000000000,  //'k'
             0b1001000000000,  //'l'
             0b1000101010100,  //'m'
             0b100001010000,   //'n'
-            0b101011100,	  //'o'
-            0b10001110001,	//'p'
+            0b101011100,      //'o'
+            0b10001110001,    //'p'
             0b100101100011,   //'q'
-            0b1010000,		  //'r'
-            0b110001101,	  //'s'
-            0b1111000,		  //'t'
-            0b11100,		  //'u'
+            0b1010000,          //'r'
+            0b110001101,      //'s'
+            0b1111000,          //'t'
+            0b11100,          //'u'
             0b10000000010000, //'v'
             0b10100000010100, //'w'
             0b10110010000000, //'x'
-            0b1100001110,	 //'y'
+            0b1100001110,     //'y'
             0b10010000001001, //'z'
             0b10000011001001, //'{'
             0b1001000000000,  //'|'
@@ -645,18 +584,15 @@ void HT16K33::printChar(uint8_t displayChar, uint8_t digit)
     if (displayChar == ' ')
         characterPosition = 0;
         //Symbols
-    else if (displayChar >= '#' && displayChar <= '>')
-    {
+    else if (displayChar >= '#' && displayChar <= '>') {
         characterPosition = displayChar - '#' + 1;
     }
         //Upper case letters + symbols
-    else if (displayChar >= 'A' && displayChar <= ']')
-    {
+    else if (displayChar >= 'A' && displayChar <= ']') {
         characterPosition = displayChar - 'A' + 1 + 28;
     }
         //Symbols + lower case letters
-    else
-    {
+    else {
         characterPosition = displayChar - '_' + 1 + 28 + 29;
     }
 
@@ -680,13 +616,11 @@ void HT16K33::printChar(uint8_t displayChar, uint8_t digit)
  * Write a byte to the display.
  * Required for Print.
  */
-size_t HT16K33::write(uint8_t b)
-{
+size_t HT16K33::write(uint8_t b) {
     //If user wants to print '.' or ':', don't increment the digitPosition!
     if (b == '.' | b == ':')
         printChar(b, 0);
-    else
-    {
+    else {
         printChar(b, digitPosition++);
         digitPosition %= (numberOfDisplays * 4); //Convert displays to number of digits
     }
@@ -698,8 +632,7 @@ size_t HT16K33::write(uint8_t b)
  * Write a character buffer to the display.
  * Required for Print.
  */
-size_t HT16K33::write(const uint8_t *buffer, size_t size)
-{
+size_t HT16K33::write(const uint8_t *buffer, size_t size) {
     size_t n = size;
     uint8_t buff;
 
@@ -709,16 +642,14 @@ size_t HT16K33::write(const uint8_t *buffer, size_t size)
 
     digitPosition = 0;
 
-    while (size--)
-    {
+    while (size--) {
         buff = *buffer++;
         //For special characters like '.' or ':', do not increment the digitPosition
         if (buff == '.')
             printChar('.', 0);
         else if (buff == ':')
             printChar(':', 0);
-        else
-        {
+        else {
             printChar(buff, digitPosition);
             displayContent[digitPosition] = buff; //Record to internal array
 
@@ -733,24 +664,20 @@ size_t HT16K33::write(const uint8_t *buffer, size_t size)
 }
 
 //Write a string to the display
-size_t HT16K33::write(const char *str)
-{
+size_t HT16K33::write(const char *str) {
     if (str == NULL)
         return 0;
-    return write((const uint8_t *)str, strlen(str));
+    return write((const uint8_t *) str, strlen(str));
 }
 
 //Push the contents of displayRAM out to the various displays in 16 byte chunks
-bool HT16K33::updateDisplay()
-{
+bool HT16K33::updateDisplay() {
     //printRAM();
 
     bool status = true;
 
-    for (uint8_t i = 0; i < numberOfDisplays; i++)
-    {
-        if (!writeRAM(lookUpDisplayAddress(i), 0, (uint8_t * )(displayRAM + (i * 16)), 16))
-        {
+    for (uint8_t i = 0; i < numberOfDisplays; i++) {
+        if (!writeRAM(lookUpDisplayAddress(i), 0, (uint8_t * )(displayRAM + (i * 16)), 16)) {
             //Serial.print("updateDisplay fail at display 0x");
             //Serial.println(lookUpDisplayAddress(i), HEX);
             status = false;
@@ -761,16 +688,13 @@ bool HT16K33::updateDisplay()
 }
 
 //Shift the display content to the right one digit
-bool HT16K33::shiftRight(uint8_t shiftAmt)
-{
-    for (uint8_t x = (4 * numberOfDisplays) - shiftAmt; x >= shiftAmt; x--)
-    {
+bool HT16K33::shiftRight(uint8_t shiftAmt) {
+    for (uint8_t x = (4 * numberOfDisplays) - shiftAmt; x >= shiftAmt; x--) {
         displayContent[x] = displayContent[x - shiftAmt];
     }
 
     //Clear the leading characters
-    for (uint8_t x = 0; x < shiftAmt; x++)
-    {
+    for (uint8_t x = 0; x < shiftAmt; x++) {
         if (x + shiftAmt > (4 * numberOfDisplays))
             break; //Error check
 
@@ -781,18 +705,15 @@ bool HT16K33::shiftRight(uint8_t shiftAmt)
 }
 
 //Shift the display content to the left one digit
-bool HT16K33::shiftLeft(uint8_t shiftAmt)
-{
-    for (int x = 0; x < 4 * numberOfDisplays; x++)
-    {
+bool HT16K33::shiftLeft(uint8_t shiftAmt) {
+    for (int x = 0; x < 4 * numberOfDisplays; x++) {
         if (x + shiftAmt > (4 * numberOfDisplays))
             break; //Error check
         displayContent[x] = displayContent[x + shiftAmt];
     }
 
     //Clear the trailing characters
-    for (int x = 0; x < shiftAmt; x++)
-    {
+    for (int x = 0; x < shiftAmt; x++) {
         if (4 * numberOfDisplays - 1 - x < 0)
             break; //Error check
 
@@ -804,8 +725,7 @@ bool HT16K33::shiftLeft(uint8_t shiftAmt)
 
 /*----------------------- Internal I2C Abstraction -----------------------------*/
 
-bool HT16K33::readRAM(uint8_t address, uint8_t reg, uint8_t *buff, uint8_t buffSize)
-{
+bool HT16K33::readRAM(uint8_t address, uint8_t reg, uint8_t *buff, uint8_t buffSize) {
     uint8_t displayNum = 0;
     if (address == _deviceAddressLeftCenter)
         displayNum = 1;
@@ -819,8 +739,7 @@ bool HT16K33::readRAM(uint8_t address, uint8_t reg, uint8_t *buff, uint8_t buffS
     _i2cPort->write(reg);
     _i2cPort->endTransmission(false);
 
-    if (_i2cPort->requestFrom(address, buffSize) > 0)
-    {
+    if (_i2cPort->requestFrom(address, buffSize) > 0) {
         for (uint8_t i = 0; i < buffSize; i++)
             buff[i] = _i2cPort->read();
         return true;
@@ -838,8 +757,7 @@ bool HT16K33::readRAM(uint8_t address, uint8_t reg, uint8_t *buff, uint8_t buffS
 
 //Write the contents of the RAM array out to the Holtek IC
 //After much testing, it
-bool HT16K33::writeRAM(uint8_t address, uint8_t reg, uint8_t *buff, uint8_t buffSize)
-{
+bool HT16K33::writeRAM(uint8_t address, uint8_t reg, uint8_t *buff, uint8_t buffSize) {
     uint8_t displayNum = 0;
     if (address == _deviceAddressLeftCenter)
         displayNum = 1;
@@ -863,12 +781,13 @@ bool HT16K33::writeRAM(uint8_t address, uint8_t reg, uint8_t *buff, uint8_t buff
 
 //Write a single byte to the display. This is often a command byte.
 //The address of the data to write is contained in the first four bits of dataToWrite
-bool HT16K33::writeRAM(uint8_t address, uint8_t dataToWrite)
-{
+bool HT16K33::writeRAM(uint8_t address, uint8_t dataToWrite) {
     uint8_t temp = 0;
-    return (writeRAM(address, dataToWrite, (uint8_t *)&temp, 0));
+    return (writeRAM(address, dataToWrite, (uint8_t * ) & temp, 0));
 }
+
 HT16K33::HT16K33() {
     _i2cPort = Aperture::USB::I2CDriverHelper();
 }
+
 HT16K33::HT16K33(const Aperture::USB::I2CDriverHelper &i2CPort) : _i2cPort(&i2CPort) {}

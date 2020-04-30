@@ -790,3 +790,7 @@ HT16K33::HT16K33() {
 }
 
 HT16K33::HT16K33(const Aperture::USB::I2CDriverHelper &i2CPort) : _i2cPort(&i2CPort) {}
+
+HT16K33::~HT16K33() {
+    _i2cPort = null;
+}

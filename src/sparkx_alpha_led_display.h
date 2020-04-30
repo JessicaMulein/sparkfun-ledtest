@@ -22,8 +22,8 @@ Distributed as-is; no warranty is given.
 #ifndef __SparkFun_Alphanumeric_Display_H__
 #define __SparkFun_Alphanumeric_Display_H__
 
-#include "i2cDriverHelper.h"
 #include "arduino/Print.h"
+#include "i2cDriverHelper.h"
 
 #define DEFAULT_ADDRESS 0x70 //Default I2C address when A0, A1 are floating
 // #define DEV_ID 0x12          //Device ID that I just made up
@@ -77,6 +77,7 @@ private:
     char displayContent[4 * 4 + 1] = "";
 
 public:
+    ~HT16K33();
     HT16K33();
 
     HT16K33(const Aperture::USB::I2CDriverHelper &i2CPort);

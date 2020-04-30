@@ -25,6 +25,7 @@ namespace Aperture {
             const uint8_t OP_WRITE = 1;
             const uint8_t OP_READ = 0;
 
+            ~I2CDriverHelper();
             I2CDriverHelper();
             I2CDriverHelper(std::string port);
 

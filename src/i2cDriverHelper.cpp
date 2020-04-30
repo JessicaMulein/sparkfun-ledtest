@@ -5,6 +5,10 @@
 #include <cstdio>
 #include <iostream>
 
+Aperture::USB::I2CDriverHelper::~I2CDriverHelper() {
+    _i2cDriver->connected = 0;
+}
+
 Aperture::USB::I2CDriverHelper::I2CDriverHelper(std::string port) : _portName(port) {
     i2c_connect(&_i2cDriver, port.c_str());
 }
@@ -53,7 +57,7 @@ void Aperture::USB::I2CDriverHelper::begin(int address)
 }
 
 void Aperture::USB::I2CDriverHelper::requestFrom(uint8_t address, size_t size, bool sendStop) {
-    i2c_start(_i2cDriver, address, OP_READ);
+    i2c_start(_i2cDriver, address, Aperture::USB::I2CDriverHelper::OP_READ);
     if (size > BUFFER_LENGTH) {
         size = BUFFER_LENGTH;
     }
@@ -98,7 +102,6 @@ void Aperture::USB::I2CDriverHelper::beginTransmission(int address)
 
 uint8_t Aperture::USB::I2CDriverHelper::endTransmission(uint8_t sendStop)
 {
-    i2c_start(_i2cDriver, txAddress, OP_WRITE);
     i2c_write(_i2cDriver, txBuffer, txBufferLength);
     if (sendStop) {
         i2c_stop(_i2cDriver);

@@ -24,7 +24,6 @@
 #define PARSE_TIMEOUT 1000  // default number of milli-seconds to wait
 #define NO_SKIP_CHAR  1  // a magic char not found in a valid ASCII numeric field
 #include <chrono>
-#include <iostream>
 
 // private method to read stream with timeout
 int Stream::timedRead() {
@@ -147,7 +146,7 @@ long Stream::parseInt(char skipChar) {
 
     do {
         if(c == skipChar)
-            ; // ignore this charactor
+            ; // ignore this character
         else if(c == '-')
             isNegative = true;
         else if(c >= '0' && c <= '9')        // is c a digit?

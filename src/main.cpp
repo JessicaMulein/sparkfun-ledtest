@@ -18,6 +18,6 @@ int main()
     }
     std::cerr << "Display acknowledged." << std::endl;
 
-    const String disp = "Milk";
-    display.print(disp);
+    const char dispCstr[5] = "Milk";
+    display.print(dispCstr);
 }

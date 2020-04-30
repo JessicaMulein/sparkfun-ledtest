@@ -22,11 +22,9 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <string>
 
-#include "WString.h"
 #include "Printable.h"
-
-#include "stdlib_noniso.h"
 
 #define DEC 10
 #define HEX 16
@@ -76,8 +74,7 @@ public:
     inline size_t write(int8_t c) { return write((uint8_t) c); }
 
     size_t printf(const char * format, ...)  __attribute__ ((format (printf, 2, 3)));
-    size_t print(const __FlashStringHelper *);
-    size_t print(const String &);
+    size_t print(const std::string &);
     size_t print(const char[]);
     size_t print(char);
     size_t print(unsigned char, int = DEC);
@@ -88,8 +85,7 @@ public:
     size_t print(double, int = 2);
     size_t print(const Printable&);
 
-    size_t println(const __FlashStringHelper *);
-    size_t println(const String &s);
+    size_t println(const std::string &s);
     size_t println(const char[]);
     size_t println(char);
     size_t println(unsigned char, int = DEC);
@@ -102,6 +98,8 @@ public:
     size_t println(void);
 
     virtual void flush() { /* Empty implementation for backward compatibility */ }
+    static char * dtostrf(double number, signed char width, unsigned char prec, char *s);
+
 };
 
 #endif

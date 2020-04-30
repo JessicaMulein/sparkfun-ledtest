@@ -7,11 +7,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(SOURCE_FILES
     Print.h
     Print.cpp
-    WString.cpp
-    WString.h
-    stdlib_noniso.h
-    stdlib_noniso.c
+    Printable.h
 )
 #list(TRANSFORM SOURCE_FILES PREPEND "src/")
 
-add_library(sparkx_arduino STATIC stdlib_noniso.c)
+add_library(sparkx_arduino STATIC ${SOURCE_FILES})

@@ -12,11 +12,6 @@ set(SOURCE_FILES
         i2cDriverHelper.h
         sparkx_alpha_led_display.cpp
         sparkx_alpha_led_display.h
-        arduino/Print.h
-        arduino/Print.cpp
-        arduino/WString.cpp
-        arduino/WString.h
-        arduino/stdlib_noniso.h
 )
 list(TRANSFORM SOURCE_FILES PREPEND "src/")
 
